@@ -3,26 +3,31 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 
 class Geofences {
-  static const MethodChannel _channel =
-      const MethodChannel('geofences_backgound_location');
+  static const MethodChannel _locationsChanel =
+      const MethodChannel('dl.geofences.flutter/locations');
+  static const MethodChannel _positionChanel =
+      const MethodChannel('dl.geofences.flutter/positions');
 
   static Future<String> get getPosition async {
     String position;
     try {
-      position = await _channel.invokeMethod('getPosition');
+      position = await _positionChanel.invokeMethod('getPosition');
     } on PlatformException catch (error) {
       position = 'Error geting position:\n' + error.toString();
     }
+    print(position);
     return position;
   }
 
-  static Future<String> get initLocation async {
-    String position;
+  static Future<String> initLocation() async {
+    String location;
+
     try {
-      position = await _channel.invokeMethod('initLocation');
+      location = await _locationsChanel.invokeMethod('initLocation');
     } on PlatformException catch (error) {
-      position = 'Error geting position:\n' + error.toString();
+      location = 'Error geting position:\n' + error.toString();
     }
-    return position;
+    print(location);
+    return location;
   }
 }

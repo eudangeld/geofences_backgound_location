@@ -13,43 +13,33 @@ import CoreLocation
     let center = UNUserNotificationCenter.current()
     var authorized = false
     
+    
     override func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         
         
         let controller : FlutterViewController = window?.rootViewController as! FlutterViewController
-        let bglocation = FlutterMethodChannel(name: "geofences_backgound_location/locations",
+        let locations = FlutterMethodChannel(name: "dl.geofences.flutter/locations",
                                               binaryMessenger: controller as! FlutterBinaryMessenger)
         
         
-        bglocation.setMethodCallHandler({
+        locations.setMethodCallHandler({
             (call:FlutterMethodCall,result:FlutterResult)->Void in
-            guard call.method=="initLocation" else{
+            if (call.method=="initLocation")
+            {
+                self.initLocation(result:result)
+            }
+            else if(call.method=="getPosition"){
+                self.getPosition(result:result)
+            }
+            else{
                 result(FlutterMethodNotImplemented)
                 return
             }
-            self.requestPermissionLocalization(result:result)
-        })
-        
-        bglocation.setMethodCallHandler({
-            (call: FlutterMethodCall,result:@escaping FlutterResult)-> Void in
-            guard call.method=="initNotifications" else{
-                result(FlutterMethodNotImplemented)
-                return
-            }
-            self.initNotifications(result:result)
-        })
-        
-        bglocation.setMethodCallHandler({
-            (call: FlutterMethodCall, result: FlutterResult) -> Void in
             
-            guard call.method=="getPosition" else {
-                result (FlutterMethodNotImplemented)
-                return
-            }
-            self.getPosition(result:result)
         })
+        
         
         GeneratedPluginRegistrant.register(with: self)
         
@@ -58,7 +48,7 @@ import CoreLocation
     
     
     private func getPosition(result: FlutterResult) {
-        result("Hello plugin - from swift")
+        
     }
     
     func initNotifications(result:@escaping FlutterResult){
@@ -68,9 +58,14 @@ import CoreLocation
         }
     }
     
-    func requestPermissionLocalization(result:FlutterResult){
+    func initLocation(result:FlutterResult){
         result("Initializing request for localizations")
         locationManager.requestAlwaysAuthorization()
+        locationManager.delegate = self
+        locationManager.distanceFilter = 2
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        locationManager.allowsBackgroundLocationUpdates = true
+        locationManager.startUpdatingLocation()
     }
 }
 
@@ -83,7 +78,7 @@ extension AppDelegate:CLLocationManagerDelegate{
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        print("Update location")
+        FlutterMethodCall.init()
         let content = UNMutableNotificationContent()
         content.title = "Location detected 📌"
         content.body = "Locations descriptuon alert"
@@ -102,11 +97,7 @@ extension AppDelegate:CLLocationManagerDelegate{
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         if(status == CLAuthorizationStatus.authorizedAlways){
             authorized = true
-            locationManager.delegate = self
-            locationManager.distanceFilter = 2
-            locationManager.desiredAccuracy = kCLLocationAccuracyBest
-            locationManager.allowsBackgroundLocationUpdates = true
-            locationManager.startUpdatingLocation()
+            
         }
         else {
             print("user dont authorized always location")

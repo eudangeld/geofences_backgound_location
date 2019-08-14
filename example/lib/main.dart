@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:geofences_backgound_location/geofences_backgound_location.dart';
 
 void main() => runApp(MyApp());
@@ -26,7 +27,11 @@ class _MyAppState extends State<MyApp> {
             children: <Widget>[
               FlatButton(
                 child: Text('Request location'),
-                onPressed: () => Geofences.initLocation,
+                onPressed: () => Geofences.getPosition,
+              ),
+              FlatButton(
+                child: Text('Init locations'),
+                onPressed: () => Geofences.initLocation(),
               )
             ],
           ),

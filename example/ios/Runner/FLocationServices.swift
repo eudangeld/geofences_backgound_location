@@ -41,7 +41,7 @@ class FLocationService: CLLocationManagerDelegate {
     }
 
     
-    func initLocation(){
+    private func initLocation(){
         locationManager.requestAlwaysAuthorization()
         locationManager.delegate = self
         locationManager.distanceFilter = 2

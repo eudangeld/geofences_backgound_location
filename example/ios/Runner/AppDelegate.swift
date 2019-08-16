@@ -8,15 +8,7 @@ import CoreLocation
 @available(iOS 10.0, *)
 @UIApplicationMain
 @objc class AppDelegate: FlutterAppDelegate {
-    
-    let locationManager = CLLocationManager()
-    let center = UNUserNotificationCenter.current()
-    var authorized = false
-    
-    
     var locations_service: FLocationService?
-    
-    
     override func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
@@ -34,7 +26,8 @@ import CoreLocation
             (call:FlutterMethodCall,result:FlutterResult)->Void in
             if (call.method=="initLocation")
             {
-                self.locations_service?.initLocation()
+                self.locations_service?.startMonitoring()
+                
             }
             else{
                 result(FlutterMethodNotImplemented)
@@ -49,63 +42,6 @@ import CoreLocation
         return super.application(application, didFinishLaunchingWithOptions: launchOptions)
     }
     
-    
-    private func getPosition(result: FlutterResult) {
-        
-    }
-    
-    func initNotifications(result:@escaping FlutterResult){
-        center.requestAuthorization(options: [.alert, .sound])
-        { (granted, error) in
-            result(granted)
-        }
-    }
-    
-    func initLocation(result:FlutterResult){
-        result("Initializing request for localizations")
-        locationManager.requestAlwaysAuthorization()
-        locationManager.delegate = self
-        locationManager.distanceFilter = 2
-        locationManager.desiredAccuracy = kCLLocationAccuracyBest
-        locationManager.allowsBackgroundLocationUpdates = true
-        locationManager.startUpdatingLocation()
-    }
 }
+    
 
-
-@available(iOS 10.0, *)
-extension AppDelegate:CLLocationManagerDelegate{
-    
-    func locationManager(_ manager: CLLocationManager, didVisit visit: CLVisit) {
-        print("location manager received")
-    }
-    
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        FlutterMethodCall.init()
-        let content = UNMutableNotificationContent()
-        content.title = "Location detected 📌"
-        content.body = "Locations descriptuon alert"
-        content.sound = .default()
-        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
-        let request = UNNotificationRequest(identifier: "location.dateString", content: content, trigger: trigger)
-        center.add(request, withCompletionHandler: nil)
-    }
-    
-    
-    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        print(error)
-    }
-    
-    
-    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        if(status == CLAuthorizationStatus.authorizedAlways){
-            authorized = true
-            
-        }
-        else {
-            print("user dont authorized always location")
-        }
-        
-    }
-    
-}

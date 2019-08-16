@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:geofences_backgound_location/geofences_backgound_location.dart';
 
 void main() => runApp(MyApp());
@@ -13,6 +12,8 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
+    Geofences.startMonitoring(
+        "https://hooks.slack.com/services/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");
   }
 
   @override
@@ -20,22 +21,9 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('BG Locations'),
+          title: const Text('Bg location - Example App'),
         ),
-        body: Center(
-          child: Column(
-            children: <Widget>[
-              FlatButton(
-                child: Text('Request location'),
-                onPressed: () => Geofences.getPosition,
-              ),
-              FlatButton(
-                child: Text('Init locations'),
-                onPressed: () => Geofences.initLocation(),
-              )
-            ],
-          ),
-        ),
+        body: Center(),
       ),
     );
   }

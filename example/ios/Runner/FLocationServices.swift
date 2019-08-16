@@ -16,7 +16,7 @@ class FLocationService:NSObject, CLLocationManagerDelegate {
     var hasLocationPermission  = false
     var debug = true
     var localPushTitle:String = "Location detected 📌"
-    var senddNotification = true
+    var senddNotification = false
     var updateCallUrl:String = ""
     private var hasUrl = false
     let center = UNUserNotificationCenter.current()

@@ -1,1 +1,1 @@
-rootProject.name = 'geofences_backgound_location'
+include ':app'

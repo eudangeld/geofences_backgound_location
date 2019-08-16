@@ -14,6 +14,9 @@ import CoreLocation
     var authorized = false
     
     
+    var locations_service: FLocationService?
+    
+    
     override func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
@@ -23,15 +26,15 @@ import CoreLocation
         let locations = FlutterMethodChannel(name: "dl.geofences.flutter/locations",
                                               binaryMessenger: controller as! FlutterBinaryMessenger)
         
+        locations_service = FLocationService()
+        
+        
         
         locations.setMethodCallHandler({
             (call:FlutterMethodCall,result:FlutterResult)->Void in
             if (call.method=="initLocation")
             {
-                self.initLocation(result:result)
-            }
-            else if(call.method=="getPosition"){
-                self.getPosition(result:result)
+                self.locations_service?.initLocation()
             }
             else{
                 result(FlutterMethodNotImplemented)
